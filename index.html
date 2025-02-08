@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Message</title>
+    <style>
+        body {
+            background-color: black;
+            color: lime;
+            font-family: monospace;
+            padding: 20px;
+            text-align: center;
+        }
+        #output {
+            white-space: pre-line;
+            font-size: 24px;
+        }
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            background-color: lime;
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        #gif-container {
+            display: none;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="output"></div>
+    <div id="gif-container">
+        <img src="https://i.imgur.com/ywn8xR1.gif" alt="Valentine GIF">
+    </div>
+
+    <script>
+        let step = 0;
+        let output = document.getElementById("output");
+        let gifContainer = document.getElementById("gif-container");
+        let textQueue = "Dear Rei-Rei, an important matter awaits you.\nDo you want to proceed? (Y/N)";
+        let userResponse = "";
+
+        function typeText(text, callback) {
+            output.innerHTML = "";
+            let i = 0;
+            function typing() {
+                if (i < text.length) {
+                    output.innerHTML += text[i];
+                    i++;
+                    setTimeout(typing, 50);
+                } else {
+                    output.innerHTML += '<span class="cursor"> </span>';
+                    if (callback) callback();
+                }
+            }
+            typing();
+        }
+
+        document.addEventListener("keydown", function(event) {
+            let key = event.key.toUpperCase();
+            if (key === "Y" || key === "N" || key === "ENTER") {
+                if (key !== "ENTER") userResponse = key;
+                processInput(userResponse);
+            }
+        });
+
+        function processInput(input) {
+            if (step === 0) {
+                if (input === "Y") {
+                    step = 1;
+                    typeText("Loading...", () => {
+                        setTimeout(() => {
+                            typeText("📩 ➡️ ❤️", () => {
+                                setTimeout(() => {
+                                    typeText("Felicity, will you be my valentine?\n(Y/N)");
+                                    step = 2;
+                                }, 2000);
+                            });
+                        }, 1000);
+                    });
+                } else if (input === "N") {
+                    step = 3;
+                    typeText("HINDI PWEDE ULITIN MO");
+                }
+            } else if (step === 2) {
+                if (input === "Y") {
+                    typeText("Thank you mahal!\nOh, just remember that you'll always be my valentine even if it's not February 14.\nI love you mahal, see you soon!", () => {
+                        gifContainer.style.display = "block";
+                    });
+                } else if (input === "N") {
+                    step = 3;
+                    typeText("HINDI PWEDE ULITIN MO");
+                }
+            } else if (step === 3) {
+                if (input === "Y" || input === "YES" || input === "Y/Y") {
+                    step = 0;
+                    gifContainer.style.display = "none";
+                    typeText("Dear Rei-Rei, an important matter awaits you.\nDo you want to proceed? (Y/N)");
+                } else {
+                    typeText("HINDI PWEDE ULITIN MO");
+                }
+            }
+        }
+
+        typeText(textQueue);
+    </script>
+</body>
+</html>
